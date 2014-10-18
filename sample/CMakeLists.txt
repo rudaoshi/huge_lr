@@ -22,6 +22,8 @@ if(Boost_FOUND)
   add_executable (group_update group_update.cpp)
   target_link_libraries (group_update LINK_PUBLIC vw ${Boost_LIBRARIES}  z pthread)
 
+  add_executable (predict predict.cpp)
+  target_link_libraries (predict LINK_PUBLIC vw ${Boost_LIBRARIES}  z pthread)
 
 endif()
 
