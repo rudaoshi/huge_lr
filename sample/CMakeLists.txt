@@ -25,6 +25,9 @@ if(Boost_FOUND)
   add_executable (predict predict.cpp)
   target_link_libraries (predict LINK_PUBLIC vw ${Boost_LIBRARIES}  z pthread)
 
+  add_executable (sparse_to_dense sparse_to_dense.cpp)
+  target_link_libraries (sparse_to_dense LINK_PUBLIC vw ${Boost_LIBRARIES}  z pthread)
+
 endif()
 
 # Create a library called "Hello" which includes the source file "hello.cxx".
