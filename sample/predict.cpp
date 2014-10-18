@@ -45,7 +45,7 @@ float compute_model_score(const unordered_map<string, float> & coefs, const unor
     {
         auto feature_name = coef.first;
         auto splitter = feature_name.find('_');
-        if ( splitter == feature_name.end())
+        if ( splitter == string::npos)
         {
             auto feature = features.find(coef.first);
             if ( feature != features.end())
