@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
                 for (auto audit : audit_array)
                 {
                     int idx = boost::lexical_cast<int>(audit.feature);
-                    feature[idx] = our_feature[idx] = audit.x;
+                    feature[idx] = audit.x;
 
                 }
 
