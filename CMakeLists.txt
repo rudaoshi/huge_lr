@@ -3,5 +3,5 @@ project(huge_lr)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp)
-add_executable(huge_lr ${SOURCE_FILES})
+add_subdirectory (vowpalwabbit)
+add_subdirectory (sample)
