@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     vw * all = parse_args(new_argv.size(), new_argv.data());
     example* ec = NULL;
 
-    unordered_map<string, float> feature_min;
+    unordered_map<string, float> feature_shift;
     unordered_map<string, float> feature_scale;
 
     ifstream scale_file(scale_file_name);
@@ -57,17 +57,17 @@ int main(int argc, char *argv[])
     while(scale_file)
     {
         string feature_name;
-        float feature_min_val, feature_max_val;
-        scale_file >> feature_name >> feature_min_val >> feature_max_val;
+        float feature_shift_val, feature_scale_val;
+        scale_file >> feature_name >> feature_shift_val >> feature_scale_val;
 
-        feature_min[feature_name] = feature_min_val;
+        feature_shift[feature_name] = feature_shift_val;
 
-        float scale = 1;
-        if (abs(feature_max_val - feature_min_val ) > 1e-6)
+        if (abs(feature_scale_val) <= 1e-8)
         {
-            scale = (feature_max_val - feature_min_val);
+            feature_scale_val = 1;
         }
-        feature_scale[feature_name] = scale;
+
+        feature_scale[feature_name] = feature_scale_val;
 
 
     }
