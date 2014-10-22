@@ -11,7 +11,27 @@
 using namespace std;
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 
+int  discretize(float feature_value, float feature_mean, float feature_std, int interval)
+{
+    float step = 20* feature_std/interval;
+
+    if (feature_value < feature_mean - 10*feature_std)
+    {
+        return 0;
+    }
+    else if (feature_value > feature_mean + 10*feature_std)
+    {
+        return interval + 2;
+    }
+    else
+    {
+        return int((feature_value - feature_mean)/step) + interval/2;
+    }
+
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -26,6 +46,7 @@ int main(int argc, char *argv[])
     new_argv[argc+1] = "/dev/null";
     new_argv[argc+2] = "--quiet";
 
+
     auto scale_file_param = find(new_argv.begin(), new_argv.end(),string("--scale_file"));
 
     if (scale_file_param == new_argv.end() or
@@ -34,7 +55,6 @@ int main(int argc, char *argv[])
         cout << "A scale file is needed. " << endl;
         exit(1);
     }
-
 
     string scale_file_name = *(scale_file_param + 1);
 
@@ -72,6 +92,7 @@ int main(int argc, char *argv[])
 
     }
 
+
     VW::start_parser(*all);
 
     while ( true )
@@ -94,18 +115,32 @@ int main(int argc, char *argv[])
                     continue;
                 }
 
-                feature_str += string(" |") + const_cast<const char *>(audit_array[0].space);
+                string group = const_cast<const char *>(audit_array[0].space);
+                feature_str += string(" |") + group;
                 for (auto audit : audit_array)
                 {
                     string feature_name = audit.feature;
+                    feature_str += " " + feature_name + ":" +
+                            boost::lexical_cast<string>(audit.x);
+
                     if (feature_shift.find(feature_name) != feature_shift.end())
                     {
-                        audit.x = (audit.x - feature_shift[feature_name]) / feature_scale[feature_name];
+
+                        int boundary = discretize(audit.x, feature_shift[feature_name], feature_scale[feature_name], 1000);
+                        string discret_group = " |z_" + group;
+
+                        string discret_feature_str = discret_group;
+                        for (int i = 0; i <= boundary; i ++)
+                        {
+                            discret_feature_str += " " + group + "_" + feature_name + "_"
+                                    + boost::lexical_cast<string>(i) + ":1";
+                        }
+
+                        feature_str += discret_feature_str;
+
                     }
 
 
-                    feature_str += " " + feature_name + ":" +
-                            boost::lexical_cast<string>(audit.x);
 //                    cout << audit.x << "\t"   // feature value
 //                            << audit.weight_index << "\t"  // hash name
 //                            << audit.space << "\t"   // feature group

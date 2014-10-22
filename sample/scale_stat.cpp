@@ -7,7 +7,6 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
-#include <bsm/audit.h>
 
 using namespace std;
 
@@ -40,7 +39,7 @@ int main(int argc, char *argv[])
         if ((ec = VW::get_example(all->p)) != NULL)//semiblocking operation.
         {
 
-            feature_num += 1;
+            sample_num += 1;
             for (auto audit_array : ec->audit_features)
             {
                 for (auto audit : audit_array)
@@ -69,7 +68,7 @@ int main(int argc, char *argv[])
                         );
                     }
 
-                    if (feature_mean.find(feature_name) == feature_mean.end())
+                    if (feature_sum.find(feature_name) == feature_sum.end())
                     {
 
                         feature_sum[feature_name] = audit.x;
@@ -130,7 +129,7 @@ int main(int argc, char *argv[])
     for (auto x : feature_sum)
     {
         string feature_name = x.first;
-
+        float squared_std = feature_std[feature_name];
         for (int i = feature_update_times[feature_name] + 1; i <= sample_num; i++)
         {
             float mean = feature_sum[feature_name]/i;
@@ -150,7 +149,7 @@ int main(int argc, char *argv[])
                 << "\t" << feature_min[x->first]
                 << "\t" << feature_max[x->first]
                 << "\t" << feature_sum[x->first]/sample_num
-                << "\t" << feature_std[x->first]
+                << "\t" << sqrt(feature_std[x->first])
                 << endl;
     }
 
